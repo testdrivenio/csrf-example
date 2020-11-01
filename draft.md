@@ -164,11 +164,7 @@ Now include the hidden input field in every form.
 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
 ```
 
-Done. This will take care of the CSRF for you. Now let's see if the attack is working. 
-
-![post](img/header.PNG)
-
-Here we try to steal money from a page that uses CSRF.
+Done. This will take care of the CSRF for you. Now let's see if the attack is working. Here we try to steal money from a page that uses CSRF.
 
 ![response](img/response.PNG)
 
@@ -176,7 +172,7 @@ The server rejects the request because the CSRF Token is invalid.
 
 ![random key](img/invalid.PNG)
 
-We have successfully prevented the CSRF attack. When you submit the original form, it works because the CSRF Token is automatically populated in a hidden field. 
+Add a hidden field with some random value, this results in a invalid token authentication. We have successfully prevented the CSRF attack. When you submit the original form, it works because the CSRF Token is automatically populated in a hidden field. 
 
 ![token](img/token.PNG)
 
