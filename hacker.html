@@ -1,5 +1,6 @@
 <form hidden id="hack" target="csrf-frame" action="http://localhost:5000/accounts" method="POST" autocomplete="off">
     <p>Transfer Money</p>
+     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
     <input type="text" name="account" value="hackerid">
     <input type="number" name="amount" value="2000">
 </form>

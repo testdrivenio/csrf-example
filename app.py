@@ -2,11 +2,16 @@ from flask import Flask, request, render_template, url_for, redirect
 from flask.wrappers import Request
 from flask_login import LoginManager, UserMixin
 import flask_login
+from flask_wtf.csrf import CSRFProtect
 
 app = Flask(__name__)
 app.secret_key = "csrf_in_action"
+
 login_manager = LoginManager()
+csrf = CSRFProtect()
+
 login_manager.init_app(app)
+csrf.init_app(app)
 
 BALANCE = 2000
 
