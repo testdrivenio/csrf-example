@@ -4,17 +4,21 @@ The pandemic has increased our reliance on digital goods more than ever. It also
 
 ## What is CSRF?
 
-CSRF stands for Cross-Site Request Forgery. As the name suggests, the attack executes malicious code/script on the web application, which the user already authenticated. CSRF can be done using hidden forms in the HTML or using XMLHttpRequests, triggered by clicking buttons or submitting forms that claim to do something else. Now, think of all the spam email you receive daily, was there a CSRF attack hiding in them?
+CSRF stands for Cross-Site Request Forgery. As the name suggests, the attack executes malicious code/script on the web application, which the user already authenticated. CSRF can be done using hidden forms in the HTML or using XMLHttpRequests, triggered by clicking buttons or submitting forms that claim to do something else.
+
+TODO: need a bit better transition here. maybe explain the common way that attackers implement CSRF attacks and then relate it back to how much spam one receives...
+
+Now, think of all the spam email you receive daily, was there a CSRF attack hiding in them?
 
 A user who has authenticated using a browser cookie can be exploited by a hidden code that utilizes the same cookie to make changes to the servers' data. Generally, web browsers tend to include all the cookies associated with a website with each request. So when a malicious request is made from the same browser, the attack can easily make use of the stored values.
 
 ## Example for CSRF
 
-We have a Flask app that mimics a banking application with the following specifications.
+We have a Flask app that mimics a banking application with the following specifications:
 
--   Login form that keeps track of user sessions
--   Account page that displays balance and a form to send money(login required)
--   Logout button to clear the session.
+- Login form that keeps track of user sessions
+- Account page that displays balance and a form to send money(login required)
+- Logout button to clear the session.
 
 We use Flask-login to manage user sessions. Let's see how each part of the application is defined.
 
@@ -64,8 +68,8 @@ We use Flask-login to manage user sessions. Let's see how each part of the appli
 
 ### Accounts
 
-  This is where the CSRF attack happens. The accounts page displays user balance and a form 
-  for transactions. 
+  This is where the CSRF attack happens. The accounts page displays user balance and a form
+  for transactions.
 
   ![accounts](img/accounts.PNG)
   This page is rendered on `/accounts.`
@@ -80,7 +84,7 @@ We use Flask-login to manage user sessions. Let's see how each part of the appli
   </form>
   ```
 
-  and the transactions are handled by 
+  and the transactions are handled by
 
   ```python
   @app.route("/accounts", methods=["GET", "POST"])
@@ -96,7 +100,7 @@ We use Flask-login to manage user sessions. Let's see how each part of the appli
       )
   ```
 
-  Nothing complex here. Just decrements the input amount once the form is submitted. 
+  Nothing complex here. Just decrements the input amount once the form is submitted.
 
 There is a form of trust between your web browser and the bank server. Once logged in, the bank server always sends you the required data. An attacker can exploit this form of trust by making us do some operation on the bank server without our knowledge.
 
@@ -122,10 +126,10 @@ You might have received, at some point in your life, spam emails saying that you
     }
 </script>
 ```
- 
+
 ![hacker](img/hacker.PNG)
 
-This is how the lottery page looks like. Nothing seems suspicious to ordinary eyes. But behind the scenes, there is a hidden form with `accountId` as `hackerid` and `amount` as `2000`. This runs in an `iframe` to avoid any page redirects. You `click` to claim, the code executes in the background, and the money is gone from your account. 
+This is how the lottery page looks like. Nothing seems suspicious to ordinary eyes. But behind the scenes, there is a hidden form with `accountId` as `hackerid` and `amount` as `2000`. This runs in an `iframe` to avoid any page redirects. You `click` to claim, the code executes in the background, and the money is gone from your account.
 
 ## How to prevent CSRF?
 
@@ -172,10 +176,10 @@ The server rejects the request because the CSRF Token is invalid.
 
 ![random key](img/invalid.PNG)
 
-Add a hidden field with some random value, this results in a invalid token authentication. We have successfully prevented the CSRF attack. When you submit the original form, it works because the CSRF Token is automatically populated in a hidden field. 
+Add a hidden field with some random value, this results in a invalid token authentication. We have successfully prevented the CSRF attack. When you submit the original form, it works because the CSRF Token is automatically populated in a hidden field.
 
 ![token](img/token.PNG)
 
 ## Conclusion
 
-We have seen how an attacker can forge a request and perform operations that shouldn't be possible otherwise. We must secure all the forms using the CSRF token for security purposes. Not all people on the internet are accustomed to good practices, but as a developer, you need to make sure that the form/webpage is secure to all possible extend. 
+We have seen how an attacker can forge a request and perform operations that shouldn't be possible otherwise. We must secure all the forms using the CSRF token for security purposes. Not all people on the internet are accustomed to good practices, but as a developer, you need to make sure that the form/webpage is secure to all possible extend.
