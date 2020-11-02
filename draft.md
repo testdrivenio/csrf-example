@@ -8,6 +8,10 @@ CSRF stands for Cross-Site Request Forgery. As the name suggests, the attack exe
 
 TODO: need a bit better transition here. maybe explain the common way that attackers implement CSRF attacks and then relate it back to how much spam one receives...
 
+Examples of how CSRF attacks could happen are
+- Creating a clone of your bank account or other applications that contain valuable data. Here all transactions are redirected to the attacker. The links to these pages should look the same, except they are not(centralbank.com -> cemtralbenk.com)
+- Creating a web form that contains malicious code and emailing the link or HTML template to the users. The form/HTML template is tempting to click, like a jackpot win or a discount sale page.  
+
 Now, think of all the spam email you receive daily, was there a CSRF attack hiding in them?
 
 A user who has authenticated using a browser cookie can be exploited by a hidden code that utilizes the same cookie to make changes to the servers' data. Generally, web browsers tend to include all the cookies associated with a website with each request. So when a malicious request is made from the same browser, the attack can easily make use of the stored values.
