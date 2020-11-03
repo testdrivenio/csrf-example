@@ -7,6 +7,7 @@ from flask_login import (
     login_user,
     logout_user,
 )
+from flask_wtf.csrf import CSRFProtect
 
 app = Flask(__name__)
 app.config.update(
@@ -16,6 +17,9 @@ app.config.update(
 
 login_manager = LoginManager()
 login_manager.init_app(app)
+
+csrf = CSRFProtect()
+csrf.init_app(app)
 
 
 # database
