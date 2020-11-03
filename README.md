@@ -1,15 +1,25 @@
-## CSRF in action
+# CSRF in Flask Example
 
-### Setup
-1. Create a virtualenv
-1. ```bash
+Insecure Flask App
+
+## Setup
+
+1. Create and activate a virtual environment
+
+1. Install the dependencies:
+
+    ```bash
     pip install requirements.txt
-   ```
-1. Run the Flask app
-    ```bash
-    python3 app.py
     ```
-1. Serve the `hacker.html` file using `live-server` in vscode or
+
+1. Run the Flask app:
+
     ```bash
-    python3 -m http.server
+    python app.py
+    ```
+
+1. Serve the *index.html* from "hacker with [http.server](https://docs.python.org/3/library/http.server.html#module-http.server):
+
+    ```bash
+    python -m http.server --directory hacker 8002
     ```
