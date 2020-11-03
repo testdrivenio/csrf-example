@@ -1,87 +1,98 @@
-from flask import Flask, request, render_template, url_for, redirect
-from flask.wrappers import Request
-from flask_login import LoginManager, UserMixin
-import flask_login
+from flask import Flask, Response, abort, request, render_template, url_for, redirect
+from flask_login import (
+    LoginManager,
+    UserMixin,
+    current_user,
+    login_required,
+    login_user,
+    logout_user,
+)
 from flask_wtf.csrf import CSRFProtect
 
 app = Flask(__name__)
-app.secret_key = "csrf_in_action"
+app.config.update(DEBUG=True, SECRET_KEY="csrf_in_action")
 
 login_manager = LoginManager()
-csrf = CSRFProtect()
-
 login_manager.init_app(app)
+
+csrf = CSRFProtect()
 csrf.init_app(app)
 
-BALANCE = 2000
-
 # database
-users = {"test": "test"}
+users = [
+    {
+        "username": "test",
+        "password": "test",
+        "balance": 2000,
+    }
+]
 
 
 class User(UserMixin):
-    ...
+    def __init__(self, username):
+        self.id = username
+        self.username = username
+
+
+def get_user(username: str):
+    for user in users:
+        if user["username"] == username:
+            return user
+    return None
 
 
 @login_manager.user_loader
 def user_loader(username: str):
-    if username not in users:
-        return None
-    user = User()
-    user.username = username
-    return user
+    user = get_user(username)
+    if user:
+        return User(username=user["username"])
+    return None
 
 
-@login_manager.request_loader
-def request_loader(request: Request):
-    username = request.form.get("username")
-    if username not in users:
-        return None
-    user = User()
-    user.username = username
-    auth = request.form.get("password") != users.get(username)
-    if auth:
-        return
-    user.is_authenticated = not auth
-    return user
-
-
-@login_manager.unauthorized_handler
-def unauthorized_handler():
-    return render_template("404.html")
+@app.errorhandler(401)
+def unauthorized(error):
+    return Response("Not authorized"), 401
 
 
 @app.route("/", methods=["GET", "POST"])
 def homepage():
     if request.method == "POST":
         username = request.form.get("username")
-        if request.form.get("password") == users.get(username):
-            user = User()
-            user.id = username
-            flask_login.login_user(user)
-            return redirect(url_for("accounts"))
-    if flask_login.current_user.is_authenticated:
+        password = request.form.get("password")
+
+        for user in users:
+            if user["username"] == username and user["password"] == password:
+                user_model = User(username=user["username"])
+                login_user(user_model)
+                return redirect(url_for("accounts"))
+            else:
+                return abort(401)
+
+    if current_user.is_authenticated:
         return redirect(url_for("accounts"))
+
     return render_template("index.html")
 
 
 @app.route("/accounts", methods=["GET", "POST"])
-@flask_login.login_required
+@login_required
 def accounts():
-    global BALANCE
+    user = get_user(current_user.username)
+
     if request.method == "POST":
         amount = int(request.form.get("amount"))
-        if amount >= BALANCE:
-            BALANCE -= amount
+        if amount <= user["balance"]:
+            user["balance"] -= amount
+
     return render_template(
-        "accounts.html", balance=BALANCE, username=flask_login.current_user.username
+        "accounts.html", balance=user["balance"], username=current_user.username
     )
 
 
 @app.route("/logout")
-@flask_login.login_required
+@login_required
 def logout():
-    flask_login.logout_user()
+    logout_user()
     return redirect(url_for("homepage"))
 
 
