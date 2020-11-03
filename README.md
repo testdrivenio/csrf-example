@@ -18,7 +18,7 @@ Insecure Flask App
     python app.py
     ```
 
-1. Serve the *index.html* from "hacker with [http.server](https://docs.python.org/3/library/http.server.html#module-http.server):
+1. Serve the *index.html* from the "hacker" folder with [http.server](https://docs.python.org/3/library/http.server.html#module-http.server):
 
     ```bash
     python -m http.server --directory hacker 8002
