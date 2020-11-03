@@ -1,7 +1,12 @@
-from flask import (Flask, Response, abort, redirect, render_template, request,
-                   url_for)
-from flask_login import (LoginManager, UserMixin, current_user, login_required,
-                         login_user, logout_user)
+from flask import Flask, Response, abort, redirect, render_template, request, url_for
+from flask_login import (
+    LoginManager,
+    UserMixin,
+    current_user,
+    login_required,
+    login_user,
+    logout_user,
+)
 
 app = Flask(__name__)
 app.config.update(
@@ -29,18 +34,18 @@ class User(UserMixin):
         self.username = username
 
 
+def get_user(username: str):
+    for user in users:
+        if user["username"] == username:
+            return user
+    return None
+
+
 @login_manager.user_loader
 def user_loader(username: str):
     user = get_user(username)
     if user:
         return User(username=user["username"])
-    return None
-
-
-def get_user(username: str):
-    for user in users:
-        if user["username"] == username:
-            return user
     return None
 
 
