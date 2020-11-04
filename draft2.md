@@ -48,6 +48,8 @@ After logging in, you'll be redirected to [http://127.0.0.1:5000/accounts](http:
 
 TODO: add image
 
+![cookie](img/cookie.PNG)
+
 The browser will send the cookie with each subsequent request made to the `127.0.0.1:5000` domain. Take note of the route associated with the account page:
 
 ```python
@@ -188,6 +190,8 @@ Next, include the hidden input field in yours forms.
 That's it. This will take care of CSRF for you. Now, let's see if this prevents the attack. Run both servers again. Log in to the banking app, and then try to "Click to claim" button. You should see a 400 error:
 
 TODO: show error
+![400error](img/resp1.PNG)
+![400error-enhanced](img/resp2.PNG)
 
 What happens if you add the same hidden field to the form in *hacker/index.html*?
 
@@ -210,3 +214,9 @@ We've seen how an attacker can forge a request and perform operations without th
 1. Briefly explain why CORS doesn't help mitigate CSRF for browser-based form submissions
 1. CORS does help mitigate CSRF with JSON APIs though. Why?
 1. So, if you don't support CORS and your APIs are strictly JSON, is there any reason to use CSRF tokens?
+
+There is no benefit of using CORS to help prevent CSRF attacks on the browser. CORS is used for defining who can access the resources. It is meant for `fetch()` and `XMLHttpRequest` and doesn't prevent simple request like `GET` or `POST` requests triggered by forms.
+
+When a request is made to a server, the browser makes a preflight request asking for CORS configuration(allowed_origins, allowed_types etc). The browser then checks the response against the original request. If the request doesn't meet CORS policies, the browser rejects them. So for APIs, setting `Content-Type` as `application/json` and setting allowed origin to the server making API calls can prevent unwanted requests. 
+
+Incase the APIs are not configured for CORS, and still makes requests based on stored sessions, instead of an authentication token, the APIs are vulnerable to CSRF attack. CSRF tokens are very important here and usually passed through request headers.
