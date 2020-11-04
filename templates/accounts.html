@@ -4,8 +4,8 @@
 <p>Balance: ${{balance}}</p>
 <form action="/accounts" method="POST" autocomplete="off">
     <p>Transfer Money</p>
-     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
     <input type="text" name="account" placeholder="accountid">
     <input type="number" name="amount" placeholder="amount">
     <input type="submit" value="send">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 </form>

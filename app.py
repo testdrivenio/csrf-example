@@ -1,4 +1,4 @@
-from flask import Flask, Response, abort, request, render_template, url_for, redirect
+from flask import Flask, Response, abort, redirect, render_template, request, url_for
 from flask_login import (
     LoginManager,
     UserMixin,
@@ -10,7 +10,10 @@ from flask_login import (
 from flask_wtf.csrf import CSRFProtect
 
 app = Flask(__name__)
-app.config.update(DEBUG=True, SECRET_KEY="csrf_in_action")
+app.config.update(
+    DEBUG=True,
+    SECRET_KEY="secret_sauce",
+)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -18,34 +21,42 @@ login_manager.init_app(app)
 csrf = CSRFProtect()
 csrf.init_app(app)
 
+
 # database
 users = [
     {
+        "id": 1,
         "username": "test",
         "password": "test",
         "balance": 2000,
-    }
+    },
+    {
+        "id": 2,
+        "username": "hacker",
+        "password": "hacker",
+        "balance": 0,
+    },
 ]
 
 
 class User(UserMixin):
-    def __init__(self, username):
-        self.id = username
-        self.username = username
+    ...
 
 
-def get_user(username: str):
+def get_user(user_id: int):
     for user in users:
-        if user["username"] == username:
+        if int(user["id"]) == int(user_id):
             return user
     return None
 
 
 @login_manager.user_loader
-def user_loader(username: str):
-    user = get_user(username)
+def user_loader(id: int):
+    user = get_user(id)
     if user:
-        return User(username=user["username"])
+        user_model = User()
+        user_model.id = user["id"]
+        return user_model
     return None
 
 
@@ -62,7 +73,8 @@ def homepage():
 
         for user in users:
             if user["username"] == username and user["password"] == password:
-                user_model = User(username=user["username"])
+                user_model = User()
+                user_model.id = user["id"]
                 login_user(user_model)
                 return redirect(url_for("accounts"))
             else:
@@ -77,15 +89,22 @@ def homepage():
 @app.route("/accounts", methods=["GET", "POST"])
 @login_required
 def accounts():
-    user = get_user(current_user.username)
+    user = get_user(current_user.id)
 
     if request.method == "POST":
         amount = int(request.form.get("amount"))
-        if amount <= user["balance"]:
+        account = int(request.form.get("account"))
+
+        transfer_to = get_user(account)
+
+        if amount <= user["balance"] and transfer_to:
             user["balance"] -= amount
+            transfer_to["balance"] += amount
 
     return render_template(
-        "accounts.html", balance=user["balance"], username=current_user.username
+        "accounts.html",
+        balance=user["balance"],
+        username=user["username"],
     )
 
 
