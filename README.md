@@ -9,7 +9,7 @@ Insecure Flask App
 1. Install the dependencies:
 
     ```bash
-    pip install requirements.txt
+    pip install -r requirements.txt
     ```
 
 1. Run the Flask app:
